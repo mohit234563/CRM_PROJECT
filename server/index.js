@@ -3,7 +3,7 @@ import App from './App.js';
 dotenv.config()
 try{
     App.listen(process.env.PORT || 4000,()=>{
-        console.log("server is running  on the PORT")
+        console.log(`server is running on the "http://localhost:${process.env.PORT}"`)
     })
 }catch(err){
     console.log(err);
