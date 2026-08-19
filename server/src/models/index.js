@@ -59,27 +59,30 @@ contactSchema.index({tenantId:1,email:"text"})
 contactSchema.index({tenantId:1,createdAt:-1})
 contactSchema.index({tenantId:1,name:"text",email:"text",company:"text"})
 
-const dealSchema=new Schema({
-    tenantId:{type:Schema.Types.ObjectId,ref:'Tenant',required:true,index:true},
-    userId:{type:Schema.Types.ObjectId,ref:'Contact'},
-    assignedTo:{type:Schema.Types.ObjectId,ref:'User'},
-    notes:String,
-    value:{type:Number,default:0},
-    title:{type:String,required:true,trim:true},
-    priority:{type:String,enum:['low','medium','high'],default:'medium'},
-    closeDate:Date,
-    stage:{type:String,required:true},
-    order:{type:Number,default:0}
-},{timestamps:true})
+const dealSchema = new Schema({
+    tenantId: {type: Schema.Types.ObjectId, ref: 'Tenant', required: true, index: true},
+    
+    // Change userId to contactId right here:
+    contactId: {type: Schema.Types.ObjectId, ref: 'Contact'}, 
+    
+    assignedTo: {type: Schema.Types.ObjectId, ref: 'User'},
+    notes: String,
+    value: {type: Number, default: 0},
+    title: {type: String, required: true, trim: true},
+    priority: {type: String, enum: ['low','medium','high'], default: 'medium'},
+    closeDate: Date,
+    stage: {type: String, required: true},
+    order: {type: Number, default: 0}
+}, {timestamps: true})
 
-dealSchema.index({tenantId:1,stage:1,order:1})
+dealSchema.index({tenantId: 1, stage: 1, order: 1})
 
 const activitySchema=new Schema({
     tenantId:{type:Schema.Types.ObjectId,ref:'Tenant',required:true,index:true},
     userId:{type:Schema.Types.ObjectId,ref:'User'},
     entityType:{type:String,enum:["contact","team","deal","billing"]},
     entityId:Schema.Types.ObjectId,
-    meta:Schema.Types.ObjectId,
+    meta:Schema.Types.Mixed,
     action:String
 },{timestamps:true})
 

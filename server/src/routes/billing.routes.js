@@ -14,10 +14,10 @@ router.post('/create-checkout', authenticate, requireRole('owner'), async (req, 
     if (!customerId) {
       const customer = await stripe.customers.create({
         email: req.user.email, name: req.tenant.name,
-        metadata: { tenantId: req.tenantId.toString() }
+        metadata: { tenantId: req.tenant._id.toString() }
       })
       customerId = customer.id
-      await Tenant.findByIdAndUpdate(req.tenantId, { stripeCustomerId: customerId })
+     await Tenant.findByIdAndUpdate(req.tenant._id, { stripeCustomerId: customerId })
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -26,7 +26,7 @@ router.post('/create-checkout', authenticate, requireRole('owner'), async (req, 
       line_items: [{ price: process.env.STRIPE_PRICE_ID_PRO, quantity: 1 }],
       success_url: `${process.env.CLIENT_URL}/settings/billing?success=true`,
       cancel_url:  `${process.env.CLIENT_URL}/settings/billing`,
-      metadata:    { tenantId: req.tenantId.toString() }
+      metadata:    { tenantId: req.tenant._id.toString() }
     })
 
     res.json({ url: session.url })

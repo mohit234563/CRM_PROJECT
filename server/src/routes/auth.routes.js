@@ -28,9 +28,19 @@ router.post("/register",async(req,res,next)=>{
         //first check all the credentials
         if(!(companyName && name && password && email))
             return res.status(400).json({error:"All fields are required"})
-        const slug=companyName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now()
+        const slug = companyName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now()
 
-        const tenant=await Tenant.create({name:companyName,slug:slug})
+        // Calculate a date 14 days from right now
+        const trialDate = new Date();
+        trialDate.setDate(trialDate.getDate() + 14);
+
+        // Add trialEndsAt to your tenant creation!
+        const tenant = await Tenant.create({
+            name: companyName, 
+            slug: slug,
+            trialEndsAt: trialDate // Make sure this matches your Tenant schema field name!
+        })
+
         const user=await User.create({tenantId:tenant._id,name:name,email:email,password:password,role:"owner"})
 
         //send a welcome mail
@@ -65,8 +75,9 @@ router.post("/login",async(req,res,next)=>{
 })
 
 //get current user
-router.get('/me',authenticate,async(req,res)=>{
-    res.json({user:sanitize(req.user),tenant:sanitize(req.tenant)})
+router.get('/me', authenticate, async(req, res) => {
+    // Only sanitize the user, pass the tenant exactly as it is
+    res.json({ user: sanitize(req.user), tenant: req.tenant })
 })
 
 // send invite to the team(not exists in user schema)
