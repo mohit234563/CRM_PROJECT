@@ -1,12 +1,12 @@
 import express  from "express";
-import { User,Activity,Deal,Tenant } from "../models/index.js";
+import { User,Activity,Deal,Tenant,Contact } from "../models/index.js";
 import { authenticate,requireMinRole,requirePro } from "../middleware/auth.middleware.js";
 
 
 //reports 
 
 const reports=express.Router()
-reports(authenticate,requirePro)
+reports.use(authenticate,requirePro)
 //  /api/reports/pipeline   -deal value by stage 
 reports.get('/pipeline',async(req,res,next)=>{
     try{

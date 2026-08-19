@@ -1,21 +1,24 @@
 import express from 'express'
-import io from '../../App.js'
-import { Contact,Activity } from '../models/index.js'
-import { authenticate,requireMinRole } from '../middleware/auth.middleware.js'
+import { io } from '../../App.js'
+import { Contact, Activity, Deal } from '../models/index.js'
+import { authenticate, requireMinRole } from '../middleware/auth.middleware.js'
 
-const router=express.Router()
+const router = express.Router()
 router.use(authenticate)
 
-//Get api/deal 
-router.get('/',async(req,res,next)=>{
-    const filter={tenantId:req.tenantId}
-    if(req.user.role==='member')filter.assignedTo=req.user._id
+// GET /api/deals — list deals
+router.get('/', async (req, res, next) => {
+  try {
+    const filter = { tenantId: req.tenantId }
+    if (req.user.role === 'member') filter.assignedTo = req.user._id
 
-    const deal=await Deal.findOne(filter)
-    .populate('contactId','name email company')
-    .populate('assignedTo','name email avatar')
-    .sort({stage:1,order:1})
-    
+    const deals = await Deal.find(filter)
+      .populate('contactId', 'name email company')
+      .populate('assignedTo', 'name email avatar')
+      .sort({ stage: 1, order: 1 })
+
+    res.json(deals)
+  } catch (err) { next(err) }
 })
 //Post api/deals
 router.post('/', async (req, res, next) => {

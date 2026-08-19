@@ -14,10 +14,10 @@ export const authenticate=async(req,res,next)=>{
 
         const tenant=await Tenant.findById(payload.tenantId)
         if(!tenant)
-            return req.status(401).json({error:"tenant not found"})
+          return res.status(401).json({error:"tenant not found"})
         req.user=user
         req.tenant=tenant
-        req.tenantId=tenant._Id
+        req.tenantId=tenant._id
         next()
     }catch(err){
         console.log(err)
@@ -44,8 +44,8 @@ export const requireMinRole = (minRole) => (req, res, next) => {
 
 // Gate features behind Pro plan
 export const requirePro = (req, res, next) => {
-  const { plan, subscriptionStatus, trialEndsAt } = req.tenant
-  const inTrial = subscriptionStatus === 'trialing' && new Date() < new Date(trialEndsAt)
+  const { plan, subscriptionStatus, subscriptionEndAt } = req.tenant
+  const inTrial = subscriptionStatus === 'trialing' && new Date() < new Date(subscriptionEndAt)
   if (plan === 'pro' || inTrial) return next()
   res.status(402).json({ error: 'This feature requires a Pro plan', upgrade: true })
 }

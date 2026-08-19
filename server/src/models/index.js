@@ -8,10 +8,10 @@ const tenantSchema=new Schema({
     slug:{type:String,required:true,lowercase:true},
     logo:{type:String},
     plan:{type:String,enum:["free","pro"],default:"free"},
-    subscriptionStatus:{type:String,enum:["active","inactive","cancaled","trialing"],default:"trialing"},
+    subscriptionStatus:{type:String,enum:["active","inactive","canceled","trialing"],default:"trialing"},
     subscriptionEndAt:{type:Date,default:()=>new Date(Date.now()+14*24*60*60*1000)},
-    stripCustomerId:{type:String},
-    stripsubscriptionId:{type:String},
+    stripeCustomerId:{type:String},
+    stripeSubscriptionId:{type:String},
     pipelineStages:     { type: [String], default: ['Lead', 'Prospect', 'Proposal', 'Negotiation', 'Won', 'Lost'] },
 },{timestamps:true})
 
@@ -30,8 +30,8 @@ const userSchema=new Schema({
 userSchema.index({tenantId:1,email:1},{unique:true})
 //hash password check before save into DB
 userSchema.pre('save',async function (next) {
-    if(!this.isModified('password'))return next
-    this.password=await bcrypt.hash(this.password,12)
+    if (!this.isModified('password')) return next
+    this.password = await bcrypt.hash(this.password, 12)
     next
 })
 

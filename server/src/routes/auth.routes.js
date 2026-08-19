@@ -106,7 +106,7 @@ router.post('/accept-invite',async(req,res,next)=>{
             role:invite.role,password,name
         })
         //update the request status
-        await Invite.findOneAndUpdate(invite._id,{accepted:true})
+        await Invite.findByIdAndUpdate(invite._id, { accepted: true })
 
         const tenant=await Tenant.findById(invite.tenantId)
         const authToken=signToken(user._id,invite.tenantId)

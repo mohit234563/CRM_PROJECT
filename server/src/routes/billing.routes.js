@@ -49,9 +49,9 @@ router.post('/portal', authenticate, requireRole('owner'), async (req, res, next
 
 //      /api/billing/status
 router.get('/status', authenticate, async (req, res) => {
-  const { plan, subscriptionStatus, trialEndsAt, stripeCustomerId } = req.tenant
-  const inTrial = subscriptionStatus === 'trialing' && new Date() < new Date(trialEndsAt)
-  res.json({ plan, subscriptionStatus, trialEndsAt, inTrial, hasStripe: !!stripeCustomerId })
+  const { plan, subscriptionStatus, subscriptionEndAt, stripeCustomerId } = req.tenant
+  const inTrial = subscriptionStatus === 'trialing' && new Date() < new Date(subscriptionEndAt)
+  res.json({ plan, subscriptionStatus, subscriptionEndAt, inTrial, hasStripe: !!stripeCustomerId })
 })
 
 // POST /api/billing/webhook — Stripe events (raw body)

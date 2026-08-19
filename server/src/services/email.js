@@ -12,6 +12,7 @@ const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'sandbox.smtp.mailtrap.io',
     port: Number(process.env.SMTP_PORT) || 587,
     secure: false, 
+    service:'gmail',
     auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
@@ -25,7 +26,7 @@ export const sendWelcomeEmail=(email,name,company)=>{
     send(email,`Welcome to CRM, ${name}!`,`
         <h2>Welcome aboard, ${name}!</h2>
         <p>Your workspace <strong>${company}</strong></p>
-        <p>yYou have a 14-day free trial of the Pro plan. Enjoy!</p>
+        <p>You have a 14-day free trial of the Pro plan. Enjoy!</p>
     `)
 }
 
