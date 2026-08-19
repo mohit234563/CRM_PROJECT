@@ -169,12 +169,17 @@ export default function Pipeline() {
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
 
-  const fetchDeals = useCallback(async () => {
+ const fetchDeals = useCallback(async () => {
     setLoading(true)
     try {
       const { data } = await api.get('/deals')
-      setGrouped(data.grouped)
-      setStages(data.stages)
+      
+      // Fallback default stages if the database returns an empty array
+      const defaultStages = ['Lead', 'Contacted', 'Proposal', 'Negotiation', 'Closed']
+      
+      setGrouped(data.grouped || {})
+      setStages(data.stages?.length > 0 ? data.stages : defaultStages)
+      
     } finally { setLoading(false) }
   }, [])
 
@@ -273,8 +278,8 @@ export default function Pipeline() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Pipeline</h1>
           <p className="text-gray-500 text-sm mt-0.5">
-            {Object.values(grouped).flat().length} deals ·
-            ₹{Object.values(grouped).flat().reduce((s, d) => s + (d.value || 0), 0).toLocaleString()} total value
+            {Object.values(grouped || {}).flat().length} deals ·
+            ₹{Object.values(grouped || {}).flat().reduce((s, d) => s + (d.value || 0), 0).toLocaleString()} total value
           </p>
         </div>
         <button onClick={() => setAddModal(stages[0])} className="btn-primary">

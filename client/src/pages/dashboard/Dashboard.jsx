@@ -32,11 +32,24 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get('/reports/').then(r => setStats(r.data)).finally(() => setLoading(false))
+    api.get('/reports/')
+      .then(r => setStats(r.data))
+      .catch(error => {
+        // Catch the 402 error gracefully
+        if (error.response?.status === 402) {
+          console.log("Reports are a Pro feature. Upgrade required.");
+          // Set empty stats so the dashboard still renders cleanly without crashing
+          setStats({ totalContacts: '—', totalDeals: '—', wonRevenue: 0, recentActivity: [] });
+        } else {
+          console.error("Failed to fetch reports:", error);
+        }
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const inTrial = tenant?.subscriptionStatus === 'trialing'
-  const trialDays = inTrial ? Math.max(0, Math.ceil((new Date(tenant.trialEndsAt) - new Date()) / 86400000)) : 0
+  
+const trialDays = inTrial ? Math.max(0, Math.ceil((new Date(tenant.subscriptionEndAt) - new Date()) / 86400000)) : 0
 
   return (
     <div className="p-6 max-w-6xl mx-auto">

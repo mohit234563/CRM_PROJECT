@@ -29,7 +29,7 @@ function Avatar({ name, size = 'sm' }) {
 function PlanBadge() {
   const { tenant, isPro } = useAuth()
   if (isPro) return <span className="badge bg-brand-100 text-brand-700">Pro</span>
-  const days = Math.max(0, Math.ceil((new Date(tenant?.trialEndsAt) - new Date()) / 86400000))
+  const days = Math.max(0, Math.ceil((new Date(tenant?.subscriptionEndAt) - new Date()) / 86400000))
   return <span className="badge bg-amber-100 text-amber-700">{days}d trial</span>
 }
 

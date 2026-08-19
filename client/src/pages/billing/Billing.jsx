@@ -55,8 +55,7 @@ export default function Billing() {
 
   const isPro = billing?.plan === 'pro'
   const inTrial = billing?.inTrial && !isPro
-  const trialDays = inTrial ? Math.max(0, Math.ceil((new Date(billing.trialEndsAt) - new Date()) / 86400000)) : 0
-
+  const trialDays = Math.max(0, Math.ceil((new Date(tenant?.subscriptionEndAt) - new Date()) / 86400000))
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <div className="mb-6">
